@@ -1,0 +1,17 @@
+*{
+    user-select: none;
+}
+body{
+    background-color: black;
+    color: white;
+}
+#res{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 90vh;
+}
+#game{
+    background-color: white;
+}
