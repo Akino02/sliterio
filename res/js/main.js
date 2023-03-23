@@ -1,196 +1,241 @@
-//vytvoření kostky
 const canvas = document.querySelector("canvas");
+const mouseposs = document.getElementById("mouseposs");
+const score = document.getElementById("score");
 const ctx = canvas.getContext("2d");
-const coor = document.getElementById("coor");
-const coorsnake = document.getElementById("coorsnake");
 
-let x = 500;
-let y = 500;
-let xx = 0;
-//snaha udělat úhel pod kterým se kruh bude otáčet
-let xa = 0;
-//
-let yy = 0;
-let mx = 0;
-let my = 0;
+// úvodní stránka
+const ff = document.getElementById("ff");
+const start = document.getElementById("start");
+const menu2 = document.getElementById("menu2");
+const end = document.getElementById("end");
+const playername = document.getElementById("playername");
+const privacy = document.getElementById("privacy");
+const contact = document.getElementById("contact");
+const authors = document.getElementById("authors");
+const back = document.getElementById("back");
 
-//zkusi udělat pole které bude dávat prvnímu kruhu pozici a druhému to zpozdí o jednu
-//musí to být přes class
+playername.innerHTML = localStorage.getItem("value");
 
-canvas.width = 1600;
-canvas.height = 850;
+let nospam = 0;
 
-let fx = Math.random() * canvas.width;
-let fy = Math.random() * canvas.height;
-
-class Snake {
-  constructor(rk) {
-    this.position = {
-      coorx: 100,
-      coory: 0
+start.onclick = () => {
+  if (ff.value != "") {
+    localStorage.setItem("value", ff.value);
+    playername.innerHTML = localStorage.getItem("value");
+    canvas.style.display = "block";
+    score.style.display = "block";
+    menu2.style.display = "none";
+    end.style.display = "none";
+    snakeSize = 20;
+    snakeSizeAI = 20;
+    snakeTail = 10;
+    snakeTailAI = 10;
+    scores = 0;
+    score.innerHTML = `Score: ${scores}`;
+    ff.value = "";
+    if (nospam == 0) {
+      init();
+      nospam++;
     }
-    this.rk = rk;
-    
+  } else if (ff.value == "") {
+    alert("Musíš napsat své jméno !!!");
   }
-  Head() {
-    ctx.beginPath();
-    ctx.fillStyle = "blue";
-    //ctx.translate(canvas.width/2,canvas.height/2)
-    //this.rotate(0.45);
-    ctx.arc(this.coorx, this.coory, this.rk, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.fill();
-  }
-  UpdateH() {
-    this.coorx = x;
-    this.coory = y;
-  }
-  Body() {}
+};
+
+contact.onclick = () => {
+  authors.style.display = "flex";
+  menu2.style.display = "none";
+  end.style.display = "none";
+};
+back.onclick = () => {
+  authors.style.display = "none";
+  menu2.style.display = "block";
+  end.style.display = "flex";
 }
-//spawn jídla
-class Food {
-  constructor(coorx, coory) {
-    this.coorx = coorx;
-    this.coory = coory;
-  }
-  Foods() {
+
+//
+
+canvas.width = 1800;
+canvas.height = 900;
+
+let snakeSpeed = 6;
+let snakeX = canvas.width / 2;
+let snakeY = canvas.height / 2;
+let snakeSize = 15;
+let snakeTrail = [];
+let snakeTail = 10;
+let foodposs = [];
+let foodmax = 100;
+let foodX = Math.random(Math.floor) * canvas.width - 500;
+let foodY = Math.random(Math.floor) * canvas.height - 500;
+let mouseX = 0;
+let mouseY = 0;
+let scores = 0;
+let r = Math.random(Math.floor) * 255;
+let g = Math.random(Math.floor) * 255;
+let b = Math.random(Math.floor) * 255;
+
+// AI
+let mouseAIX = Math.random(Math.floor) * canvas.width;
+let mouseAIY = Math.random(Math.floor) * canvas.height;
+let snakeAIX = canvas.width / 3;
+let snakeAIY = canvas.height / 3;
+let snakeTrailAI = [];
+let snakeSizeAI = 20;
+let snakeTailAI = 10;
+
+// nastavení pozadí na bílé a čištění následně to vytvoří hada kruhového
+function drawCanvas() {
+  ctx.fillStyle = "white";
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // player snake
+  for (let i = 0; i < snakeTrail.length; i++) {
     ctx.beginPath();
     ctx.fillStyle = "red";
-    ctx.arc(this.coorx, this.coory, 10, 0, Math.PI * 2);
-    ctx.stroke();
+    ctx.arc(snakeTrail[i].x, snakeTrail[i].y, snakeSize, 0, Math.PI * 2);
     ctx.fill();
-  }
-  UpdateF() {
-    this.coorx = fx;
-    this.coory = fy
-  }
-}
-const mySnake = new Snake(20);
-//tady ještě bude body snejka
-const myFood = new Food(fx, fy, 5);
-const myFood1 = new Food(fx, fy, 5);
-const myFood2 = new Food(fx, fy, 5);
-const myFood3 = new Food(fx, fy, 5);
-const myFood4 = new Food(fx, fy, 5);
-const myFood5 = new Food(fx, fy, 5);
-const myFood6 = new Food(fx, fy, 5);
-const myFood7 = new Food(fx, fy, 5);
-const myFood8 = new Food(fx, fy, 5);
-const myFood9 = new Food(fx, fy, 5);
-//
-//vytvoření a posouvání/reagování objektu //funguje
-function update() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  x += xx;
-  y += yy;
-  mySnake.Head();
-  mySnake.UpdateH();
-  setInterval(() => {
-    fx = Math.random() * canvas.width;
-    fy = Math.random() * canvas.height;
-  }, 1);
-  myFood.Foods();
-  /*myFood1.Foods(); test jídla
-  myFood2.Foods();
-  myFood3.Foods();
-  myFood4.Foods();
-  myFood5.Foods();
-  myFood6.Foods();
-  myFood7.Foods();
-  myFood8.Foods();
-  myFood9.Foods();*/
-  requestAnimationFrame(update);
-  coorsnake.innerHTML = `${x} , ${y}`;
-  //snaha udělat podmínku na to když se dotkne jídla tak se změní pozice a připíše score
-  /*if(myFood.UpdateF() == x){
-    score++;
-    myFood.UpdateF();
-  }*/
-}
-//vycentrování kruhu
-x = canvas.width / 2;
-y = canvas.height / 2;
-update();
-//
-//uživatel ovládání kostky
-addEventListener("keydown", function (move) {
-  if (move.code == "KeyD") {
-    xx = 5;
-    xa--;
-  } else if (move.code == "KeyA") {
-    xx = -5;
-    xa++;
-  } else if (move.code == "KeyW") {
-    yy = -5;
-  } else if (move.code == "KeyS") {
-    yy = 5;
-  }
-});
-addEventListener("keyup", function (move) {
-  if (move.code == "KeyD") {
-    xx = 0;
-  } else if (move.code == "KeyA") {
-    xx = 0;
-  } else if (move.code == "KeyW") {
-    yy = 0;
-  } else if (move.code == "KeyS") {
-    yy = 0;
-  }
-});
-let cx = 0;
-let cy = 0;
-//nový movement
-/*addEventListener("mousedown", function (move2){
-  cx = mx;
-  cy = my;
-  if (cx > x){
-    xx += 1;
-    if (cy > y) {
-      yy += 1;
-      if(cy == y){
-        yy += 0;
-      }
-    }
-    if(cx == x){
-      xx += 0;
-    }
-  }
-  else if (cx < x){
-    xx -= 1;
-    if(cx == x){
-      xx -= 0;
-    }
-  }
-  if (cy > y) {
-    yy += 1;
-    if(cy == y){
-      yy += 0;
-    }
-  }
-  else if (cy < y) {
-    yy -= 1;
-    if(cy == y){
-      yy -= 0
-    }
-  }
-});*/
-//
-//tracking mouse
-canvas.addEventListener(
-  "mousemove",
-  function (evt) {
-    let mousePos = getMousePos(canvas, evt);
-    coor.innerHTML = `${Math.floor(mousePos.x)} , ${Math.floor(mousePos.y)}`;
-    mx = Math.floor(mousePos.x);
-    my = Math.floor(mousePos.y);
-  },
-  false
-);
 
-function getMousePos(canvas, evt) {
-  let rect = canvas.getBoundingClientRect();
-  return {
-    x: evt.clientX - rect.left,
-    y: evt.clientY - rect.top,
-  };
+    // kolize
+    //celé tělo hada hráče reaguje s hlavou hadaAI
+    let distToHeadP = Math.sqrt(
+      (snakeAIX - snakeTrail[i].x) ** 2 + (snakeAIY - snakeTrail[i].y) ** 2
+    );
+    if (distToHeadP < snakeSize) {
+      snakeSizeAI = 0;
+      setTimeout(() => {
+        snakeSizeAI = 20;
+        snakeTailAI = 10;
+      }, 5000);
+    }
+  }
+  //AI snake
+  for (let i = 0; i < snakeTrailAI.length; i++) {
+    ctx.beginPath();
+    ctx.fillStyle = "orange";
+
+    ctx.arc(snakeTrailAI[i].x, snakeTrailAI[i].y, snakeSizeAI, 0, Math.PI * 2);
+    ctx.fill();
+
+    //kolize
+    //celé tělo hadaAI reaguje s hlavou hada hráče
+    let distToHeadAI = Math.sqrt(
+      (snakeX - snakeTrailAI[i].x) ** 2 + (snakeY - snakeTrailAI[i].y) ** 2
+    );
+    if (distToHeadAI < snakeSizeAI) {
+      snakeSize = 0;
+      canvas.style.display = "none";
+      score.style.display = "none";
+      menu2.style.display = "block";
+      end.style.display = "flex";
+      document.location.reload();
+    }
+  }
+
+  //funkce pro jídlo (spawn jídla a následně podmínka stím kde se jídlo nachází a pokud bude sebráné tak se změní pozice)
+  for (let i = 0; i < foodmax; i++) {
+    //náhodná pozice jídla a následně je přidána do foodposs pod nějaký název
+    foodX = Math.random(Math.floor) * canvas.width - 100;
+    foodY = Math.random(Math.floor) * canvas.height - 100;
+    foodposs.push({ x: foodX, y: foodY });
+    //
+    ctx.fillStyle = `rgb(${r},${g},${b})`;
+    ctx.fillRect(foodposs[i].x, foodposs[i].y, 10, 10);
+    let distToFood = Math.sqrt(
+      (snakeX - foodposs[i].x) ** 2 + (snakeY - foodposs[i].y) ** 2
+    );
+    let distToFoodAI = Math.sqrt(
+      (snakeAIX - foodposs[i].x) ** 2 + (snakeAIY - foodposs[i].y) ** 2
+    );
+    if (distToFood < snakeSize) {
+      scores++;
+      snakeTail += 1;
+
+      foodposs[i].x = Math.random(Math.floor) * canvas.width - 100;
+      foodposs[i].y = Math.random(Math.floor) * canvas.height - 100;
+      score.innerHTML = `Score: ${scores}`;
+    }
+    if (distToFoodAI < snakeSizeAI) {
+      snakeTailAI += 1;
+      foodposs[i].x = Math.random(Math.floor) * canvas.width - 100;
+      foodposs[i].y = Math.random(Math.floor) * canvas.height - 100;
+    }
+  }
+}
+let lastMouseX, lastMouseY;
+let lastMoveTimestamp;
+let lastDirection;
+
+document.addEventListener("mousemove", function (event) {
+  lastMouseX = event.clientX;
+  lastMouseY = event.clientY;
+  lastMoveTimestamp = Date.now();
+});
+
+function moveSnake() {
+  //přidává to pozici prvního kruhu a z toho si to berou ostatní
+  snakeTrail.push({ x: snakeX, y: snakeY });
+  snakeTrailAI.push({ x: snakeAIX, y: snakeAIY });
+
+  // stará se o to aby v poli nebylo více kruhů než má být
+  if (snakeTrail.length > snakeTail) {
+    snakeTrail.shift();
+  }
+  if (snakeTrailAI.length > snakeTailAI) {
+    snakeTrailAI.shift();
+  }
+
+  let now = Date.now();
+  let timeSinceLastMove = now - lastMoveTimestamp;
+
+  // pohyb hada k myši a následně si i vypočítá rychlost
+  let dx = lastMouseX - snakeX;
+  let dy = lastMouseY - snakeY;
+  let dxAI = mouseAIX - snakeAIX;
+  let dyAI = mouseAIY - snakeAIY;
+  let dist = Math.sqrt(dx * dx + dy * dy);
+  let distAI = Math.sqrt(dxAI * dxAI + dyAI * dyAI);
+  let velX = (dx / dist) * snakeSpeed;
+  let velY = (dy / dist) * snakeSpeed;
+  let velXAI = (dxAI / distAI) * snakeSpeed;
+  let velYAI = (dyAI / distAI) * snakeSpeed;
+
+  // uloží poslední směr myši, pokud se myš hybala v posledních 300ms
+  if (timeSinceLastMove < 10) {
+    lastDirection = { x: velX, y: velY };
+  }
+
+  // pokud je uložen poslední směr a myš se nehýbe, tak se had pohybuje v tomto směru
+  if (lastDirection && timeSinceLastMove >= 10) {
+    velX = lastDirection.x;
+    velY = lastDirection.y;
+  }
+
+  snakeX += velX;
+  snakeY += velY;
+  snakeAIX += velXAI;
+  snakeAIY += velYAI;
+}
+
+// zjišťuje pozici uživatele
+function init() {
+  canvas.addEventListener("mousemove", function (event) {
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+  });
+  // start game loop
+  gameLoop();
+}
+
+//hlavní funkce ve které jsou zbylé a opakuje se vše
+function gameLoop() {
+  setInterval(() => {
+    moveSnake();
+    drawCanvas();
+  }, 1000 / 60);
+
+  setInterval(() => {
+    mouseAIX = Math.floor(Math.random() * canvas.width);
+    mouseAIY = Math.floor(Math.random() * canvas.height);
+  }, 1000);
 }

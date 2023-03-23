@@ -1,18 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wish Slither.io</title>
+    <title>Wish Snake</title>
     <link rel="stylesheet" href="./res/css/style.css" />
   </head>
   <body>
-    <div id="coor"></div>
-    <div id="coorsnake"></div>
-    <div id="res">
-      <canvas id="game"></canvas>
+    <div id="menu2">
+      <div class="menu">
+        <b class="b1">Wish<b class="b2">.Snake</b></b>
+      </div>
+
+      <div class="nn">
+        <input type="text" id="ff" name="name" placeholder="Nickname..." />
+      </div>
+
+      <div id="playername"></div>
+      <button id="start">Play</button>
     </div>
+    <div id="score">Score: 0</div>
+    <canvas></canvas>
+    <div id="authors">
+      <table class="centert">
+        <tr>
+          <td><a class="ma" href="https://github.com/Akino02" >Michal Adámek</a></td>
+          <td><a class="jb" href="https://github.com/JakubBisko" >Jakub Biško</a></td>
+          <td rowspan="2"><a id="back">back</a></td>
+        </tr>
+        <tr>
+          <td><a class="ah" href="https://github.com/AdamHolub" >Adam Holub</a></td>
+          <td><a class="dk" href="https://github.com/David-Kadanik" >David Kadaník</a></td>
+        </tr>
+        <tr>
+        </tr>
+        <tr>
+        </tr>
+      </table>
+    </div>
+    <footer id="end">
+      <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" id="privacy"> privacy </a>
+      -
+      <a id="contact"> contact </a>
+    </footer>
     <script src="./res/js/main.js"></script>
   </body>
 </html>
