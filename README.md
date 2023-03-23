@@ -1,5 +1,5 @@
 # Wish Snake
-[play](https://akino02.github.io/wishsnake/)
+[Play](https://akino02.github.io/wishsnake/)
 <br><br><br>
 <h3>Authors</h3>
 <table>
