@@ -1,4 +1,4 @@
-# sliterio
+# Wish Snake
 [play]()
 <br><br><br>
 <h3>Authors</h3>
