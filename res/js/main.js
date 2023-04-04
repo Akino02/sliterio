@@ -1,6 +1,7 @@
 const canvas = document.querySelector("canvas");
 const mouseposs = document.getElementById("mouseposs");
 const score = document.getElementById("score");
+const highscore = document.getElementById("highscore");
 const ctx = canvas.getContext("2d");
 
 // úvodní stránka
@@ -15,6 +16,9 @@ const authors = document.getElementById("authors");
 const back = document.getElementById("back");
 
 playername.innerHTML = localStorage.getItem("value");
+if (localStorage.getItem("score") > 0){
+  highscore.innerHTML = `HighScore: ${localStorage.getItem("score")}`;
+}
 
 let nospam = 0;
 
@@ -26,6 +30,7 @@ start.onclick = () => {
     score.style.display = "block";
     menu2.style.display = "none";
     end.style.display = "none";
+    highscore.style.display = "none";
     snakeSize = 20;
     snakeSizeAI = 20;
     snakeTail = 10;
@@ -46,11 +51,13 @@ contact.onclick = () => {
   authors.style.display = "flex";
   menu2.style.display = "none";
   end.style.display = "none";
+  playername.style.display = "none";
 };
 back.onclick = () => {
   authors.style.display = "none";
   menu2.style.display = "block";
   end.style.display = "flex";
+  playername.style.display = "block";
 }
 
 //
@@ -122,13 +129,19 @@ function drawCanvas() {
     let distToHeadAI = Math.sqrt(
       (snakeX - snakeTrailAI[i].x) ** 2 + (snakeY - snakeTrailAI[i].y) ** 2
     );
-    if (distToHeadAI < snakeSizeAI) {
+    //pokud se hráč dotkne druhého hada hlavou, tak prohraje. pokud vyjede z pole prohraje
+    if (distToHeadAI < snakeSizeAI || (snakeX > canvas.width || snakeY > canvas.height || snakeX < 0 || snakeY < 0)) {
       snakeSize = 0;
       canvas.style.display = "none";
       score.style.display = "none";
       menu2.style.display = "block";
       end.style.display = "flex";
+      if (scores >= localStorage.getItem("score")){
+        localStorage.setItem("score", scores);
+      }
       document.location.reload();
+      snakeX = canvas.width/2;
+      snakeY = canvas.height/2;
     }
   }
 
